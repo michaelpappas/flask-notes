@@ -69,3 +69,6 @@ class User(db.Model):
         else:
             return False
 
+    def get_fullname(self):
+        return f"{self.first_name} {self.last_name}"
+

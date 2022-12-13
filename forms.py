@@ -64,3 +64,6 @@ class LoginForm(FlaskForm):
             Length(max=100)
         ]
     )
+
+class CSRFProtectForm(FlaskForm):
+    """Form just for CSRF Protection"""

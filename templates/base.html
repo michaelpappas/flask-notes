@@ -15,6 +15,20 @@
         {% for msg in get_flashed_messages() %}
         {% endfor %}
 
+        <ul>
+            Quick links:
+            <li><a href="/">Go to Root</a></li>
+
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+
+            <li><a href="/users/{{ session.username }}">My profile</a></li>
+
+        </ul>
+
+
+
+
         {% block content %}{% endblock %}
     </div>
 
