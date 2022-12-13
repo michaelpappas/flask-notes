@@ -46,12 +46,11 @@ def register():
         first_name = form.first_name.data
         last_name = form.last_name.data
 
-        # todo move
         user = User.register(
             username=username,
             pwd=password,
-            email=user.email,
-            first_name=user,
+            email=email,
+            first_name=first_name,
             last_name=last_name
         )
 
