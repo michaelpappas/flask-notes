@@ -5,7 +5,7 @@ from flask import Flask, redirect, render_template, flash, jsonify, request, ses
 
 from models import db, connect_db, User
 
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///fnotes'
@@ -65,33 +65,28 @@ def register():
         return render_template("register.html", form=form)
 
 
-@app.post("/api/cupcakes")
-def create_cupcake():
+@app.route("/login", methods=["GET", "POST"])
+def login():
     """
-    Create a cupcake with flavor, size, rating and image data from the body of
-    the request.
-    Return: {cupcake: {id, flavor, size, rating, image}}
+    Show a form that when submitted will login a user. This form should accept a username and a password.
 
     """
-    flavor = request.json["flavor"]
-    size = request.json["size"]
-    rating = request.json["rating"]
-    image = request.json["image"] or None
+    form = LoginForm()
 
-    new_cupcake = Cupcake(
-        flavor=flavor,
-        size=size,
-        rating=rating,
-        image=image
-    )
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
-    db.session.add(new_cupcake)
-    # flask abstracts and returns the new instance
-    db.session.commit()
+        user = User.login(username,password)
 
-    serialized = new_cupcake.serialize()
+        if user:
+            session["username"] = user.username
+            return redirect("/secret")
+        else:
+            form.username.errors = ["Bad name/password"]
 
-    return (jsonify(cupcake=serialized), 201)
+    return render_template("login.html", form = form)
+
 
 @app.patch("/api/cupcakes/<int:cupcake_id>")
 def update_cupcake(cupcake_id):
