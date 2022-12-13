@@ -19,9 +19,11 @@
             Quick links:
             <li><a href="/">Go to Root</a></li>
 
+            <!-- hide if authenticated -->
             <li><a href="/login">Login</a></li>
             <li><a href="/register">Register</a></li>
 
+            <!-- hide if not logged in -->
             <li><a href="/users/{{ session.username }}">My profile</a></li>
 
         </ul>

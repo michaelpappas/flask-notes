@@ -46,10 +46,18 @@ def register():
         first_name = form.first_name.data
         last_name = form.last_name.data
 
-        user = User.register(username=username, pwd=password)
+        # todo move
+        user = User.register(
+            username=username,
+            pwd=password,
+            email=user.email,
+            first_name=user,
+            last_name=last_name
+        )
         user.email = email
         user.first_name = first_name
         user.last_name = last_name
+
         db.session.add(user)
         db.session.commit()
 
