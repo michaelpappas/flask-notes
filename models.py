@@ -78,3 +78,32 @@ class User(db.Model):
     def get_fullname(self):
         return f"{self.first_name} {self.last_name}"
 
+class Note(db.Model):
+    """ A note """
+    __tablename__ = 'notes'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
+    title = db.Column(
+            db.String(100),
+            nullable=False
+    )
+
+
+    content = db.Column(
+                db.Text,
+                nullable=False
+    )
+
+    owner = db.Column(
+                db.String(),
+                db.ForeignKey('users.username'),
+                nullable=False
+    )
+
+    author = db.relationship("User", backref="notes")
+

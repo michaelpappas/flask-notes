@@ -1,7 +1,7 @@
 """Flask app for Cupcakes"""
 
 from flask import Flask, redirect, render_template, flash, session
-from models import db, connect_db, User
+from models import db, connect_db, User, Note
 from forms import RegisterForm, LoginForm, CSRFProtectForm
 
 app = Flask(__name__)
