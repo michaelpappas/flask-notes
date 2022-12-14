@@ -97,16 +97,13 @@ def user_detail(username):
         return redirect("/")
 
     user = User.query.get_or_404(username)
-    logout_form = CSRFProtectForm()
-    delete_note_form = CSRFProtectForm()
-    delete_user_form = CSRFProtectForm()
 
     csrf_form = CSRFProtectForm()
 
     if "username" in session:
         return render_template("user_detail.html",
                                 user=user,
-                                logout_form=logout_form,
+                                # logout_form=logout_form,
                                 csrf_form=csrf_form
                                 )
     else:
@@ -157,7 +154,6 @@ def delete_user(username):
 def add_note(username):
     """ Display a form to add notes. """
 
-    # breakpoint()
     if  "username" not in session or session["username"] != username:
         return redirect("/")
 
@@ -185,21 +181,25 @@ def update_note(note_id):
     POST: Flash message and redirect to profile page.
 
     """
-    note = Note.query.get_or_404(note_id)
 
+    note = Note.query.get_or_404(note_id)
+    username = note.owner
+
+    if  "username" not in session or session["username"] != username:
+        return redirect("/")
+    breakpoint()
     form = EditNoteForm(obj=note)
 
     if form.validate_on_submit():
         note.title = form.data.get("title", note.title)
         note.content = form.data.get("content", note.content)
 
-        # note.title = title
-        # note.content = content
-
         db.session.commit()
 
         flash("New note has been added!")
+
         return redirect(f"/users/{note.owner}")
+
     else:
         return render_template("edit_note.html", form = form)
 
@@ -212,6 +212,7 @@ def delete_note(note_id):
     form = CSRFProtectForm()
 
     if form.validate_on_submit():
+
         db.session.delete(note)
         db.session.commit()
 
