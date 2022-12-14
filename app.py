@@ -92,17 +92,23 @@ def login():
 def user_detail(username):
     """ Displays a template that shows information about that user """
 
+    # We will keep it dry with "Hooks"
+    if  "username" not in session or session["username"] != username:
+        return redirect("/")
+
     user = User.query.get_or_404(username)
     logout_form = CSRFProtectForm()
     delete_note_form = CSRFProtectForm()
     delete_user_form = CSRFProtectForm()
 
+    csrf_form = CSRFProtectForm()
+
     if "username" in session:
         return render_template("user_detail.html",
                                 user=user,
                                 logout_form=logout_form,
-                                delete_note_form = delete_note_form,
-                                delete_user_form = delete_user_form)
+                                csrf_form=csrf_form
+                                )
     else:
         flash("You need to log in!")
         return redirect("/")
@@ -123,13 +129,23 @@ def logout():
 def delete_user(username):
     """ Delete user and redirect to /"""
 
+    # Fail fast why query if not logged in, dont bother to do it
+
+    if  "username" not in session or session["username"] != username:
+        return redirect("/")
+
     user = User.query.get_or_404(username)
 
     form = CSRFProtectForm()
 
     if form.validate_on_submit():
+
+        Note.query.filter_by(username=username).delete()
+
         db.session.delete(user)
         db.session.commit()
+
+        session.pop("username", None)
 
         flash(f"{username} has been deleted!")
         return redirect("/")
@@ -142,8 +158,8 @@ def add_note(username):
     """ Display a form to add notes. """
 
     # breakpoint()
-    # if not ("username" in session) or not (session["username"] != username):
-    #     return redirect("/")
+    if  "username" not in session or session["username"] != username:
+        return redirect("/")
 
     form = NoteForm()
 
@@ -201,6 +217,9 @@ def delete_note(note_id):
 
         flash("Note has been deleted!")
         return redirect(f"/users/{username}")
+        # or note.username but not appropriate deletes it from db but it
+        # still exists within this function
+        # instance in this context still exists
 
 
 

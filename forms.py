@@ -88,6 +88,8 @@ class NoteForm(FlaskForm):
         ]
     )
 
+# Feedback if fields are identical between create and edit use the same form
+
 class EditNoteForm(FlaskForm):
     """Form for adding a note."""
 

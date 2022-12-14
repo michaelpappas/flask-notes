@@ -20,7 +20,7 @@
       <a class="btn btn-primary" href="/notes/{{note.id}}/update">Edit</a>
       <form method="POST" action="/notes/{{note.id}}/delete">
 
-        {{ delete_note_form.hidden_tag() }}
+        {{ csrf_form.hidden_tag() }}
 
         <button type="submit" class="btn btn-danger">Delete</a>
       </form>
@@ -43,7 +43,7 @@
 
 <form method="POST" action="/users/{{user.username}}/delete">
 
-  {{ delete_user_form.hidden_tag() }}
+  {{ csrf_form.hidden_tag() }}
 
   <button type="submit" class="btn btn-danger">Delete User</a>
 </form>
