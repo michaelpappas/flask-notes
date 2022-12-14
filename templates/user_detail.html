@@ -18,20 +18,33 @@
     <p>{{ note.content }}</p>
     <div>
       <a class="btn btn-primary" href="/notes/{{note.id}}/update">Edit</a>
-      <a class="btn btn-danger" href="/notes/{{note.id}}/delete">Delete</a>
+      <form method="POST" action="/notes/{{note.id}}/delete">
+
+        {{ delete_note_form.hidden_tag() }}
+
+        <button type="submit" class="btn btn-danger">Delete</a>
+      </form>
+
     </div>
   </li>
   {% endfor %}
 </ul>
-
+<a href="/users/{{user.username}}/notes/add" class="btn btn-secondary">Add a note.</a>
 
 <hr>
-
 
 <form method="POST" action="/logout">
 
   {{ logout_form.hidden_tag() }}
 
+
   <button type="submit" class="btn btn-danger">Log out</a>
+</form>
+
+<form method="POST" action="/users/{{user.username}}/delete">
+
+  {{ delete_user_form.hidden_tag() }}
+
+  <button type="submit" class="btn btn-danger">Delete User</a>
 </form>
 {% endblock %}

@@ -94,9 +94,15 @@ def user_detail(username):
 
     user = User.query.get_or_404(username)
     logout_form = CSRFProtectForm()
+    delete_note_form = CSRFProtectForm()
+    delete_user_form = CSRFProtectForm()
 
     if "username" in session:
-        return render_template("user_detail.html", user=user, logout_form=logout_form)
+        return render_template("user_detail.html",
+                                user=user,
+                                logout_form=logout_form,
+                                delete_note_form = delete_note_form,
+                                delete_user_form = delete_user_form)
     else:
         flash("You need to log in!")
         return redirect("/")
@@ -112,6 +118,21 @@ def logout():
         session.pop("username", None)
 
     return redirect("/")
+
+@app.post("/users/<username>/delete")
+def delete_user(username):
+    """ Delete user and redirect to /"""
+
+    user = User.query.get_or_404(username)
+
+    form = CSRFProtectForm()
+
+    if form.validate_on_submit():
+        db.session.delete(user)
+        db.session.commit()
+
+        flash(f"{username} has been deleted!")
+        return redirect("/")
 
 
 # ================================NOTES=====================================
@@ -141,5 +162,45 @@ def add_note(username):
 
 @app.route("/notes/<int:note_id>/update", methods=["POST", "GET"])
 def update_note(note_id):
+    """
+    GET:
+    Show a form that when submitted will edit the note
+
+    POST: Flash message and redirect to profile page.
+
+    """
+    note = Note.query.get_or_404(note_id)
+
+    form = EditNoteForm(obj=note)
+
+    if form.validate_on_submit():
+        note.title = form.data.get("title", note.title)
+        note.content = form.data.get("content", note.content)
+
+        # note.title = title
+        # note.content = content
+
+        db.session.commit()
+
+        flash("New note has been added!")
+        return redirect(f"/users/{note.owner}")
+    else:
+        return render_template("edit_note.html", form = form)
+
+@app.post("/notes/<int:note_id>/delete")
+def delete_note(note_id):
+    """ Delete note and redirect to profile page"""
 
     note = Note.query.get_or_404(note_id)
+    username = note.owner
+    form = CSRFProtectForm()
+
+    if form.validate_on_submit():
+        db.session.delete(note)
+        db.session.commit()
+
+        flash("Note has been deleted!")
+        return redirect(f"/users/{username}")
+
+
+
