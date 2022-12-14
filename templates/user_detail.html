@@ -10,6 +10,24 @@
 <p>{{ user.get_fullname() }}</p>
 <p>{{ user.email }}</p>
 
+<h2>All of my notes</h2>
+<ul>
+  {% for note in user.notes %}
+  <li>
+    <p>{{ note.title }}</p>
+    <p>{{ note.content }}</p>
+    <div>
+      <a class="btn btn-primary" href="/notes/{{note.id}}/update">Edit</a>
+      <a class="btn btn-danger" href="/notes/{{note.id}}/delete">Delete</a>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+
+
+<hr>
+
+
 <form method="POST" action="/logout">
 
   {{ logout_form.hidden_tag() }}

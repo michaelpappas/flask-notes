@@ -2,7 +2,7 @@
 
 from flask import Flask, redirect, render_template, flash, session
 from models import db, connect_db, User, Note
-from forms import RegisterForm, LoginForm, CSRFProtectForm
+from forms import RegisterForm, LoginForm, CSRFProtectForm, NoteForm, EditNoteForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///fnotes'
@@ -112,3 +112,34 @@ def logout():
         session.pop("username", None)
 
     return redirect("/")
+
+
+# ================================NOTES=====================================
+
+@app.route("/users/<username>/notes/add", methods=["POST", "GET"])
+def add_note(username):
+    """ Display a form to add notes. """
+
+    # breakpoint()
+    # if not ("username" in session) or not (session["username"] != username):
+    #     return redirect("/")
+
+    form = NoteForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        content = form.content.data
+
+        new_note = Note(title=title, content=content, owner=username)
+        db.session.add(new_note)
+        db.session.commit()
+
+        flash("New note has been added!")
+        return redirect(f"/users/{username}")
+    else:
+        return render_template("add_note.html", form=form)
+
+@app.route("/notes/<int:note_id>/update", methods=["POST", "GET"])
+def update_note(note_id):
+
+    note = Note.query.get_or_404(note_id)
